@@ -77,7 +77,7 @@ body = {
         },
         "Goals": goalID,
         "FieldNames": stolbec,
-        "ReportName": f"Отчет №9",
+        "ReportName": f"Отчет 9",
         "ReportType": "CRITERIA_PERFORMANCE_REPORT",
         "DateRangeType": "CUSTOM_DATE",
         "Format": "TSV",
