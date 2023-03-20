@@ -6,7 +6,7 @@ password = 'root'
 engine = create_engine(f'postgresql://test:{password}@localhost:5432/test')
 
 # Read the excel file
-df = pd.read_csv(r'amocrm_export_leads_2023-03-16.csv', encoding="utf-8")
+df = pd.read_csv(r'./amocrm_export_leads.csv', encoding="utf-8")
 print(df.info())
 try:
     df.to_sql(name='excel', con=engine, if_exists='append', index=False)
