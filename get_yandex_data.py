@@ -139,5 +139,5 @@ while True:
         break
 
 # создаем csv файл и записываем в него ответ
-with open("./cashe.csv", 'w', encoding='utf-8') as file:
+with open("./yandex_data.csv", 'w', encoding='utf-8') as file:
     file.write(req.text)
