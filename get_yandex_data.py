@@ -41,8 +41,8 @@ column = ['Date', 'CampaignName', 'AdGroupName', 'AdGroupId', 'AdNetworkType', '
 # ID цели
 goal_id = ['282393785']
 # даты отчета
-first_date = "2023-03-20"
-second_date = "2023-03-20"
+first_date = "2023-03-19"
+second_date = "2023-03-19"
 
 # --- Подготовка запроса ---
 # Создание HTTP-заголовков запроса
@@ -62,7 +62,7 @@ body = {
         "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
         "Goals": goal_id,
         "FieldNames": column,
-        "ReportName": f"Отчет 124",
+        "ReportName": f"Отчет 1451",
         "ReportType": "CRITERIA_PERFORMANCE_REPORT",
         "DateRangeType": "CUSTOM_DATE",
         "Format": "TSV",
