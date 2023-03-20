@@ -1,10 +1,8 @@
-# %%
 # -*- coding: utf-8 -*-
 import requests
 from requests.exceptions import ConnectionError
 from time import sleep
 import json
-import pandas as pd
 
 # Метод для корректной обработки строк в кодировке UTF-8 как в Python 3, так и в Python 2
 import sys
@@ -13,71 +11,58 @@ import sys
 if sys.version_info < (3,):
     def u(x):
         try:
-            return x.encode("utf8")
+            return x.encode("utf-8")
         except UnicodeDecodeError:
             return x
 else:
     def u(x):
         if type(x) == type(b''):
-            return x.decode('utf8')
+            return x.decode('utf-8')
         else:
             return x
-# %%
+
 # --- Входные данные ---
 # Адрес сервиса Reports для отправки JSON-запросов (регистрозависимый)
 ReportsURL = 'https://api.direct.yandex.com/json/v5/reports'
 
 # OAuth-токен пользователя, от имени которого будут выполняться запросы
-token = 'y0_AgAAAABoe7q4AAZAOQAAAADcA1lZJ4MheKoOQy-YJTO5rcHX31eDyM0'
+token = 'y0_AgAAAABf82q1AAZAOQAAAADOqyOFZIope4xMQBi3iWMw37Q0wvHflGE'
 
 # Логин клиента рекламного агентства
 # Обязательный параметр, если запросы выполняются от имени рекламного агентства
-clientLogin = 'direct.profitpol'
+clientLogin = 'ivan-poisk-bm'
 
 # какие столбцы подгрузить
-stolbec = ['Date', 'CampaignName', 'AdGroupName', 'AdGroupId', \
-           'AdNetworkType', 'Criteria', 'CriteriaType', 'MatchType', 'RlAdjustmentId', \
-           'LocationOfPresenceName', 'Device', 'Gender', 'Age', 'Impressions', 'Clicks', 'Cost', 'AvgEffectiveBid', \
-           'AvgTrafficVolume', 'AvgImpressionPosition', 'AvgClickPosition', 'BounceRate', 'Conversions']
+column = ['Date', 'CampaignName', 'AdGroupName', 'AdGroupId', 'AdNetworkType', 'Placement', 'Criteria', 'CriteriaType',
+          'MatchType', 'RlAdjustmentId', 'LocationOfPresenceName', 'Device', 'Gender', 'Age', 'Impressions', 'Clicks',
+          'Cost', 'AvgEffectiveBid', 'AvgTrafficVolume', 'AvgImpressionPosition', 'AvgClickPosition', 'Bounces',
+          'BounceRate', 'Conversions']
 
 # ID цели
-goalID = ['282393785']
+goal_id = ['282393785']
 # даты отчета
-firstDate = "2023-02-28"
-secondDate = "2023-02-28"
-# %%
+first_date = "2023-03-20"
+second_date = "2023-03-20"
 
 # --- Подготовка запроса ---
 # Создание HTTP-заголовков запроса
-headers = {
-    # OAuth-токен. Использование слова Bearer обязательно
-    "Authorization": "Bearer " + token,
-    # Логин клиента рекламного агентства
-    "Client-Login": clientLogin,
-    # Язык ответных сообщений
-    "Accept-Language": "ru",
-    # Режим формирования отчета
-    "processingMode": "auto",
-    # Формат денежных значений в отчете
-    "returnMoneyInMicros": "false",
-    # Не выводить в отчете строку с названием отчета и диапазоном дат
-    # "skipReportHeader": "true",
-    # Не выводить в отчете строку с названиями полей
-    # "skipColumnHeader": "true",
-    # Не выводить в отчете строку с количеством строк статистики
-    "skipReportSummary": "true"
-}
+headers = {"Authorization": "Bearer " + token,
+           "Client-Login": clientLogin,
+           "Accept-Language": "ru",
+           "processingMode": "auto",
+           "returnMoneyInMicros": "false",
+           "skipReportHeader": "true",
+           # "skipColumnHeader": "true",
+           "skipReportSummary": "true"
+           }
 
 # Создание тела запроса
 body = {
     "params": {
-        "SelectionCriteria": {
-            "DateFrom": firstDate,
-            "DateTo": secondDate
-        },
-        "Goals": goalID,
-        "FieldNames": stolbec,
-        "ReportName": f"Отчет №9",
+        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
+        "Goals": goal_id,
+        "FieldNames": column,
+        "ReportName": f"Отчет 124",
         "ReportType": "CRITERIA_PERFORMANCE_REPORT",
         "DateRangeType": "CUSTOM_DATE",
         "Format": "TSV",
@@ -88,8 +73,6 @@ body = {
 
 # Кодирование тела запроса в JSON
 body = json.dumps(body, indent=4)
-
-# %%
 
 # --- Запуск цикла для выполнения запросов ---
 # Если получен HTTP-код 200, то выводится содержание отчета
@@ -154,28 +137,7 @@ while True:
         print("Произошла непредвиденная ошибка")
         # Принудительный выход из цикла
         break
-# %%
+
 # создаем csv файл и записываем в него ответ
-file = open("cashe.csv", "w", encoding="utf8")
-file.write(req.text)
-file.close()
-
-# превращаем ответ в таблицу
-df = pd.read_csv("cashe.csv", header=1, sep='\t', index_col=0, encoding="utf8")
-
-# меняем значения в конверсиях - на 0, переводит в int
-
-for col in df.columns:
-    if 'Conversions' in col:
-        df[col] = df[col].replace('--', '0').astype(int)
-        conv = col
-
-# проверка таблицы
-df.groupby('CampaignName', as_index=False).agg({'Clicks': 'sum', 'Cost': 'sum', conv: 'sum'}).sort_values(conv)
-# %%
-
-# %%
-
-# %%
-
-# %%
+with open("./cashe.csv", 'w', encoding='utf-8') as file:
+    file.write(req.text)
