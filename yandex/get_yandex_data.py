@@ -33,7 +33,7 @@ column = ['Date', 'CampaignName', 'AdGroupName', 'AdGroupId', 'AdNetworkType', '
           'BounceRate', 'Conversions']
 
 # ID цели
-goal_id = ['282393785']
+goal_id = ['282393785', '120846175', '208408852', '209436928', '208415434']
 # даты отчета
 first_date = "2023-03-19"
 second_date = "2023-03-19"
@@ -77,7 +77,7 @@ body = {
         "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
         "Goals": goal_id,
         "FieldNames": column,
-        "ReportName": f"Отчет 1451",
+        "ReportName": f"Отчет 7674",
         "ReportType": "CRITERIA_PERFORMANCE_REPORT",
         "DateRangeType": "CUSTOM_DATE",
         "Format": "TSV",

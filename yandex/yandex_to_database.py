@@ -6,10 +6,16 @@ password = 'root'
 engine = create_engine(f'postgresql://test:{password}@localhost:5432/test')
 
 # Read the excel file
-df = pd.read_csv("yandex_data.csv", sep='\t', encoding="utf8")
-# df = df.drop('ff', axis=1)
-print(df)
+df1 = pd.read_csv("./yandex_data_one.csv", sep='\t', encoding="utf8")
+df2 = pd.read_csv("./yandex_data_two.csv", sep='\t', encoding="utf8")
+df3 = pd.read_csv("./yandex_data_three.csv", sep='\t', encoding="utf8")
+print(df1)
+print(df2)
 try:
-    df.to_sql(name='table_test', con=engine, if_exists='append', index=False)
+    df1.to_sql(name='table_test', con=engine, if_exists='append', index=False)
+    df2.to_sql(name='table_test', con=engine, if_exists='append', index=False)
+    df3.to_sql(name='table_test', con=engine, if_exists='append', index=False)
 except:
-    df.to_sql(name='table_test', con=engine, if_exists='replace', index=False)
+    df1.to_sql(name='table_test', con=engine, if_exists='replace', index=False)
+    df2.to_sql(name='table_test', con=engine, if_exists='append', index=False)
+    df3.to_sql(name='table_test', con=engine, if_exists='append', index=False)
