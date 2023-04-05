@@ -6,8 +6,8 @@ from config import load_config
 
 # Establish a connection
 config = load_config(".env")
-database = f'postgresql://{config.db.user_db}:{config.db.password_db}@{config.db.address_db}:{config.db.port_db}/{config.db.name_db}'
-engine = create_engine(database)
+link_postgres = f'postgresql://{config.db.user_db}:{config.db.password_db}@{config.db.address_db}:{config.db.port_db}/{config.db.name_db}'
+engine = create_engine(link_postgres)
 
 # Read the excel file
 df_csv = pd.read_csv(r'./amocrm_export_leads.csv', encoding="utf-8")
