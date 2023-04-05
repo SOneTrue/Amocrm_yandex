@@ -1,9 +1,12 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
+from config import load_config
+
 # Establish a connection
-password = 'root'
-engine = create_engine(f'postgresql://test:{password}@localhost:5432/test')
+config = load_config(".env")
+database = f'postgresql://{config.db.user_db}:{config.db.password_db}@{config.db.address_db}:{config.db.port_db}/{config.db.name_db}'
+engine = create_engine(database)
 
 # Read the excel file
 df1 = pd.read_csv("./yandex_data_one.csv", sep='\t', encoding="utf8")

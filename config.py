@@ -24,10 +24,20 @@ class YandexLogin:
 
 
 @dataclass
+class DbConfig:
+    user_db: str
+    password_db: str
+    address_db: str
+    port_db: str
+    name_db: str
+
+
+@dataclass
 class Config:
     reports: Reports
     yandex_token: YandexToken
     yandex_login: YandexLogin
+    db: DbConfig
 
 
 def load_config(path: str = None):
@@ -49,12 +59,12 @@ def load_config(path: str = None):
             login_two=env.str("LOGIN_TWO"),
             login_three=env.str("LOGIN_THREE"),
         ),
+        db=DbConfig(
+            user_db=env.str('USER_DB'),
+            password_db=env.str('PASSWORD_DB'),
+            address_db=env.str('ADDRESS_DB'),
+            port_db=env.str('PORT_DB'),
+            name_db=env.str('NAME_DB')
+
+        ),
     )
-    #     db=DbConfig(
-    #         host=env.str('DB_HOST'),
-    #         password=env.str('DB_PASS'),
-    #         user=env.str('DB_USER'),
-    #         database=env.str('DB_NAME')
-    #     ),
-    #     misc=Miscellaneous()
-    # )
