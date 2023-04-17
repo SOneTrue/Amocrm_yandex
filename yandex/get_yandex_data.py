@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import random
 # Метод для корректной обработки строк в кодировке UTF-8 как в Python 3, так и в Python 2
 import sys
 from time import sleep
@@ -72,12 +73,38 @@ headers_three = {"Authorization": f'{config.reports.token_type} ' + config.yande
                  }
 
 # Создание тела запроса
-body = {
+body_one = {
     "params": {
         "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
         "Goals": goal_id,
         "FieldNames": column,
-        "ReportName": f"Отчет 7674",
+        "ReportName": f"Отчет {random.randint(1, 10000)}",
+        "ReportType": "CRITERIA_PERFORMANCE_REPORT",
+        "DateRangeType": "CUSTOM_DATE",
+        "Format": "TSV",
+        "IncludeVAT": "YES",
+        "IncludeDiscount": "NO"
+    }
+}
+body_two = {
+    "params": {
+        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
+        "Goals": goal_id,
+        "FieldNames": column,
+        "ReportName": f"Отчет {random.randint(1, 10000)}",
+        "ReportType": "CRITERIA_PERFORMANCE_REPORT",
+        "DateRangeType": "CUSTOM_DATE",
+        "Format": "TSV",
+        "IncludeVAT": "YES",
+        "IncludeDiscount": "NO"
+    }
+}
+body_three = {
+    "params": {
+        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
+        "Goals": goal_id,
+        "FieldNames": column,
+        "ReportName": f"Отчет {random.randint(1, 10000)}",
         "ReportType": "CRITERIA_PERFORMANCE_REPORT",
         "DateRangeType": "CUSTOM_DATE",
         "Format": "TSV",
@@ -87,23 +114,25 @@ body = {
 }
 
 # Кодирование тела запроса в JSON
-body = json.dumps(body, indent=4)
+body_first = json.dumps(body_one, indent=4)
+body_second = json.dumps(body_two, indent=4)
+body_third = json.dumps(body_three, indent=4)
 
 # --- Запуск цикла для выполнения запросов ---
 # Если получен HTTP-код 200, то выводится содержание отчета
 # Если получен HTTP-код 201 или 202, выполняются повторные запросы
 while True:
     try:
-        request_one = requests.post(config.reports.reports_url, body, headers=headers_one)
-        request_two = requests.post(config.reports.reports_url, body, headers=headers_two)
-        request_three = requests.post(config.reports.reports_url, body, headers=headers_three)
+        request_one = requests.post(config.reports.reports_url, body_first, headers=headers_one)
+        request_two = requests.post(config.reports.reports_url, body_second, headers=headers_two)
+        request_three = requests.post(config.reports.reports_url, body_third, headers=headers_three)
         request_one.encoding = 'utf-8'  # Принудительная обработка ответа в кодировке UTF-8
         request_two.encoding = 'utf-8'
         request_three.encoding = 'utf-8'
         if request_one.status_code == 400 and request_two.status_code == 400 and request_three.status_code == 400:
             print("Параметры запроса указаны неверно или достигнут лимит отчетов в очереди")
             print("RequestId: {}".format(request_one.headers.get("RequestId", False)))
-            print("JSON-код запроса: {}".format(u(body)))
+            print("JSON-код запроса: {}".format(u(body_first)))
             print("JSON-код ответа сервера: \n{}".format(u(request_one.json())))
             break
         elif request_one.status_code == 200 and request_two.status_code == 200 and request_three.status_code == 200:
