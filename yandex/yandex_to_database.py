@@ -9,9 +9,9 @@ link_postgres = f'postgresql://{config.db.user_db}:{config.db.password_db}@{conf
 engine = create_engine(link_postgres)
 
 # Read the excel file
-df1 = pd.read_csv("./yandex_data_one.csv", sep='\t', encoding="utf8")
-df2 = pd.read_csv("./yandex_data_two.csv", sep='\t', encoding="utf8")
-df3 = pd.read_csv("./yandex_data_three.csv", sep='\t', encoding="utf8")
+df1 = pd.read_csv("./excel/yandex_data_one.csv", sep='\t', encoding="utf8")
+df2 = pd.read_csv("./excel/yandex_data_two.csv", sep='\t', encoding="utf8")
+df3 = pd.read_csv("./excel/yandex_data_three.csv", sep='\t', encoding="utf8")
 print(df1)
 print(df2)
 try:

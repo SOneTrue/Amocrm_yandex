@@ -10,7 +10,7 @@ link_postgres = f'postgresql://{config.db.user_db}:{config.db.password_db}@{conf
 engine = create_engine(link_postgres)
 
 # Read the excel file
-df_csv = pd.read_csv(r'./amocrm_export_leads.csv', encoding="utf-8")
+df_csv = pd.read_csv(r'./excel/amocrm_export_leads.csv', encoding="utf-8")
 df_csv = df_csv.drop(column, axis=1)
 print(df_csv)
 
