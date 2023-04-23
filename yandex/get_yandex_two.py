@@ -42,17 +42,7 @@ second_date = "2023-03-19"
 # --- Подготовка запроса ---
 # Создание HTTP-заголовков запроса
 
-headers_one = {"Authorization": f'{config.reports.token_type} ' + config.yandex_token.token_one,
-               "Client-Login": config.yandex_login.login_one,
-               "Accept-Language": "ru",
-               "processingMode": "auto",
-               "returnMoneyInMicros": "false",
-               "skipReportHeader": "true",
-               # "skipColumnHeader": "true",
-               "skipReportSummary": "true"
-               }
-
-headers_two = {"Authorization": f'{config.reports.token_type} ' + config.yandex_token.token_two,
+headers_one = {"Authorization": f'{config.reports.token_type} ' + config.yandex_token.token_two,
                "Client-Login": config.yandex_login.login_two,
                "Accept-Language": "ru",
                "processingMode": "auto",
@@ -62,101 +52,50 @@ headers_two = {"Authorization": f'{config.reports.token_type} ' + config.yandex_
                "skipReportSummary": "true"
                }
 
-headers_three = {"Authorization": f'{config.reports.token_type} ' + config.yandex_token.token_three,
-                 "Client-Login": config.yandex_login.login_three,
-                 "Accept-Language": "ru",
-                 "processingMode": "auto",
-                 "returnMoneyInMicros": "false",
-                 "skipReportHeader": "true",
-                 # "skipColumnHeader": "true",
-                 "skipReportSummary": "true"
-                 }
-
 # Создание тела запроса
-body_one = {
-    "params": {
-        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
-        "Goals": goal_id,
-        "FieldNames": column,
-        "ReportName": f"Отчет {random.randint(1, 10000)}",
-        "ReportType": "CRITERIA_PERFORMANCE_REPORT",
-        "DateRangeType": "CUSTOM_DATE",
-        "Format": "TSV",
-        "IncludeVAT": "YES",
-        "IncludeDiscount": "NO"
-    }
-}
-body_two = {
-    "params": {
-        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
-        "Goals": goal_id,
-        "FieldNames": column,
-        "ReportName": f"Отчет {random.randint(1, 10000)}",
-        "ReportType": "CRITERIA_PERFORMANCE_REPORT",
-        "DateRangeType": "CUSTOM_DATE",
-        "Format": "TSV",
-        "IncludeVAT": "YES",
-        "IncludeDiscount": "NO"
-    }
-}
-body_three = {
-    "params": {
-        "SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date},
-        "Goals": goal_id,
-        "FieldNames": column,
-        "ReportName": f"Отчет {random.randint(1, 10000)}",
-        "ReportType": "CRITERIA_PERFORMANCE_REPORT",
-        "DateRangeType": "CUSTOM_DATE",
-        "Format": "TSV",
-        "IncludeVAT": "YES",
-        "IncludeDiscount": "NO"
-    }
-}
+body = {"params": {"SelectionCriteria": {"DateFrom": first_date, "DateTo": second_date}, "Goals": goal_id,
+                   "FieldNames": column, "ReportName": f"Отчет {random.randint(1, 10000)}",
+                   "ReportType": "CRITERIA_PERFORMANCE_REPORT", "DateRangeType": "CUSTOM_DATE", "Format": "TSV",
+                   "IncludeVAT": "YES", "IncludeDiscount": "NO"}}
 
 # Кодирование тела запроса в JSON
-body_first = json.dumps(body_one, indent=4)
-body_second = json.dumps(body_two, indent=4)
-body_third = json.dumps(body_three, indent=4)
+body = json.dumps(body, indent=4)
 
 # --- Запуск цикла для выполнения запросов ---
 # Если получен HTTP-код 200, то выводится содержание отчета
 # Если получен HTTP-код 201 или 202, выполняются повторные запросы
 while True:
     try:
-        request_one = requests.post(config.reports.reports_url, body_first, headers=headers_one)
-        request_two = requests.post(config.reports.reports_url, body_second, headers=headers_two)
-        request_three = requests.post(config.reports.reports_url, body_third, headers=headers_three)
+        request_one = requests.post(config.reports.reports_url, body, headers=headers_one)
         request_one.encoding = 'utf-8'  # Принудительная обработка ответа в кодировке UTF-8
-        request_two.encoding = 'utf-8'
-        request_three.encoding = 'utf-8'
-        if request_one.status_code == 400 and request_two.status_code == 400 and request_three.status_code == 400:
+        if request_one.status_code == 400:
             print("Параметры запроса указаны неверно или достигнут лимит отчетов в очереди")
             print("RequestId: {}".format(request_one.headers.get("RequestId", False)))
-            print("JSON-код запроса: {}".format(u(body_first)))
+            print("JSON-код запроса: {}".format(u(body)))
             print("JSON-код ответа сервера: \n{}".format(u(request_one.json())))
             break
-        elif request_one.status_code == 200 and request_two.status_code == 200 and request_three.status_code == 200:
+        elif request_one.status_code == 200:
             print("Отчет создан успешно")
             print("RequestId: {}".format(request_one.headers.get("RequestId", False)))
             break
-        elif request_one.status_code == 201 and request_two.status_code == 201 and request_three.status_code == 201:
+        elif request_one.status_code == 201:
             print("Отчет успешно поставлен в очередь в режиме офлайн")
             retryIn = int(20)
             print("Повторная отправка запроса через {} секунд".format(retryIn))
             print("RequestId: {}".format(request_one.headers.get("RequestId", False)))
             sleep(retryIn)
-        elif request_one.status_code == 202 and request_two.status_code == 202 and request_three.status_code == 202:
+        elif request_one.status_code == 202:
             print("Отчет формируется в режиме офлайн")
             retryIn = int(request_one.headers.get("retryIn", 60))
             print("Повторная отправка запроса через {} секунд".format(retryIn))
             print("RequestId:  {}".format(request_one.headers.get("RequestId", False)))
             sleep(retryIn)
-        elif request_one.status_code == 500 and request_two.status_code == 500 and request_three.status_code == 500:
+        elif request_one.status_code == 500:
             print("При формировании отчета произошла ошибка. Пожалуйста, попробуйте повторить запрос позднее")
             print("RequestId: {}".format(request_one.headers.get("RequestId", False)))
             print("JSON-код ответа сервера: \n{}".format(u(request_one.json())))
             break
-        elif request_one.status_code == 502 and request_two.status_code == 502 and request_three.status_code == 502:
+        elif request_one.status_code == 502:
             print("Время формирования отчета превысило серверное ограничение.")
             print(
                 "Пожалуйста, попробуйте изменить параметры запроса - уменьшить период и количество запрашиваемых данных.")
@@ -185,12 +124,7 @@ while True:
         # Принудительный выход из цикла
         break
 
-# создаем csv файл и записываем в него ответ
-with open("./yandex_data_one.csv", 'w', encoding='utf-8') as file_one:
-    file_one.write(request_one.text)
+    # создаем csv файл и записываем в него ответ
 
-with open("./yandex_data_two.csv", 'w', encoding='utf-8') as file_two:
-    file_two.write(request_two.text)
-
-with open("./yandex_data_three.csv", 'w', encoding='utf-8') as file_three:
-    file_three.write(request_three.text)
+    with open("./excel/yandex_data_two.csv", 'w', encoding='utf-8') as file_one:
+        file_one.write(request_one.text)
